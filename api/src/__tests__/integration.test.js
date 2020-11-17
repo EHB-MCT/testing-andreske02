@@ -58,3 +58,14 @@ describe('POST /newstoryblock endpoint', ()=>{
     })
 })
 
+describe('GET /storyblock endpoint', ()=>{
+    test('check if response is created', async (done) =>{
+        try {
+            const response = await request.get('/storyblock/2')
+            expect(response.status).toBe(200,done())
+        } catch (error) {
+            console.log(error);
+            done()
+        }
+    })
+})
