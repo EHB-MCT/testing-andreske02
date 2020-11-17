@@ -25,7 +25,8 @@ app.use(
     extended: true,
   })
 );
-// Show All
+
+/*--------- SHOW ALL RECORDS --------*/
 app.get("/", async (req, res) => {
   const result = await pg.select(["uuid", "title", "created_at"]).from("story");
   res.json({
@@ -36,7 +37,7 @@ app.get("/test", (req, res) => {
   res.status(200).send();
 });
 
-// Show specific
+/*--------- RECORDS BY ID --------*/
 app.get("/story/:id", async (req, res) => {
   const result = await pg
     .select(["uuid", "title", "created_at"])
@@ -50,13 +51,19 @@ app.get("/storyblock/:id", async (req, res) => {
   const result = await pg
     .select(["uuid", "content", "created_at"])
     .from("storyblock")
-    .where({ id: req.params.id });
-  res.json({
-    res: result,
-  });
+    .where({ id: req.params.id }).then(async (data) => {
+      if (data.length >= 1) {
+        res.json({
+          res: data,
+        });
+      }else{
+        res.status(404).send();
+      }
+    });  
+
 });
 
-// Create
+/*--------- CREATE RECORDS --------*/
 app.post("/newstoryblock/", async (req, res) => {
   const uuid = Helpers.generateUUID();
   const getStory = await pg
@@ -80,6 +87,7 @@ app.post("/newstoryblock/", async (req, res) => {
             console.log(e);
           });
       } else {
+        console.log("STORY DON'T EXIST!");
         res.status(404).send();
       }
     })
@@ -88,7 +96,15 @@ app.post("/newstoryblock/", async (req, res) => {
     });
 });
 
-// Initialize
+/*--------- DELETE RECORDS --------*/
+app.delete("/storyblock/", async (req, res) => {
+  const result = await pg.from("storyblock").where({ uuid: req.body.uuid }).del().then((data) => {
+    console.log(data);
+    res.json(data)
+  }).catch(() =>  res.status(404).send())
+});
+
+/*--------- INITIALIZE TABLES --------*/
 async function initialiseTables() {
   await pg.schema.hasTable("storyblock").then(async (exists) => {
     if (!exists) {
