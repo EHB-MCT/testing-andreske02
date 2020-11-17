@@ -14,6 +14,6 @@ describe('stringlength tester', () => {
   })
   test('If string starts with a capital', () => {
     expect(Helpers.checkTitleLength("hello wolrd")).toBeFalsy();
-  })
+  }) 
 })
 

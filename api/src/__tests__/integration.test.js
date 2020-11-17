@@ -4,10 +4,10 @@ const app = require('../server.js')
 
 request = supertest(app)
 describe('GET /test endpoint', ()=>{
-    test('check if response is 201', async (done) =>{
+    test('check if response is 200', async (done) =>{
         try {
             const response = await request.get('/test')
-            expect(response.status).toBe(201,done())
+            expect(response.status).toBe(200,done())
             expect(response.body).toStrictEqual({},done())
         } catch (error) {
             
