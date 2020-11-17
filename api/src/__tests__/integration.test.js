@@ -3,6 +3,7 @@ const app = require('../server.js')
 
 
 request = supertest(app)
+// TEST
 describe('GET /test endpoint', ()=>{
     test('check if response is 200', async (done) =>{
         try {
@@ -14,7 +15,6 @@ describe('GET /test endpoint', ()=>{
         }
     })
 })
-
 describe('POST /test endpoint', ()=>{
     test('check if response is 404', async (done) =>{
         try {
@@ -29,6 +29,8 @@ describe('POST /test endpoint', ()=>{
     })
 })
 
+
+// STORY
 describe('POST /newstoryblock endpoint', ()=>{
     test('check if response is created and story_id exist', async (done) =>{
         const service = {
@@ -57,7 +59,6 @@ describe('POST /newstoryblock endpoint', ()=>{
         }
     })
 })
-
 describe('GET /storyblock endpoint', ()=>{
     test('check if response is created', async (done) =>{
         try {
@@ -69,3 +70,18 @@ describe('GET /storyblock endpoint', ()=>{
         }
     })
 })
+describe('DELETE /storyblock endpoint', ()=>{
+    test('check if storyblock is deleted', async (done) =>{
+        try {
+            const service = {
+                uuid: 'f70445c0-2910-11eb-891c-89c8941e6bf9'
+            };
+            const response = await request.delete('/storyblock/').send(service)
+            expect(response.status).toBe(200,done())
+        } catch (error) {
+            console.log(error);
+            done()
+        }
+    })
+})
+
