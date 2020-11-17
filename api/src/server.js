@@ -53,10 +53,12 @@ app.get("/storyblock/:id", async (req, res) => {
     .from("storyblock")
     .where({ id: req.params.id }).then(async (data) => {
       if (data.length >= 1) {
+        log("STORYBLOCK WITH ID:", req.params.id , "Exist")
         res.json({
           res: data,
         });
       }else{
+        log(`STORYBLOCK WITH ID: ${req.params.id}  Don't exist`)
         res.status(404).send();
       }
     });  
@@ -80,14 +82,14 @@ app.post("/newstoryblock/", async (req, res) => {
             story_id: req.body.story_id,
           })
           .then(async function () {
-            console.log("NEW STORYBLOCK: ", "created new storyblock");
+            log("NEW STORYBLOCK: ", "created new storyblock");
             res.status(200).send();
           })
           .catch((e) => {
             console.log(e);
           });
       } else {
-        console.log("STORY DON'T EXIST!");
+        log("STORY DON'T EXIST! with id:", req.body.story_id);
         res.status(404).send();
       }
     })
@@ -99,7 +101,7 @@ app.post("/newstoryblock/", async (req, res) => {
 /*--------- DELETE RECORDS --------*/
 app.delete("/storyblock/", async (req, res) => {
   const result = await pg.from("storyblock").where({ uuid: req.body.uuid }).del().then((data) => {
-    console.log(data);
+    log(`DELETED STORYBLOCK: with uuid ${req.body.uuid}`);
     res.json(data)
   }).catch(() =>  res.status(404).send())
 });
