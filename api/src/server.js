@@ -55,7 +55,7 @@ app.get("/story/:id", async (req, res) => {
 });
 app.get("/storyblock/:id", async (req, res) => {
   const result = await pg
-    .select(["uuid", "content", "created_at"])
+    .select(["uuid", "content","story_id", "created_at"])
     .from("storyblock")
     .where({ id: req.params.id }).then(async (data) => {
       if (data.length >= 1) {
