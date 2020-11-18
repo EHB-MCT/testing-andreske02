@@ -6,7 +6,7 @@ const Helpers = {
      const uuid = uuidv1();  
      return uuid;
   },
-  checkTitleLength: (title) => {
+  checkTitleLength: (title, maxLength) => {
     if (typeof title !== "string") {
       return false
     }
@@ -17,6 +17,18 @@ const Helpers = {
       return false
     }
     return title
+  },
+  checkContentLength: (title, maxLength) => {
+    if (title.length > maxLength) {
+      return false
+    }
+    return true
+  },
+  checkIfString: (title) => {
+    if (typeof title !== "string") {
+      return false
+    }
+    return true
   }
 }
 

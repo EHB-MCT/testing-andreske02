@@ -36,6 +36,12 @@ app.get("/", async (req, res) => {
 app.get("/test", (req, res) => {
   res.status(200).send();
 });
+app.get("/storyblock/", async (req, res) => {
+  const result = await pg.select(["uuid", "content","story_id", "created_at"]).from("storyblock");
+  res.json({
+    res: result,
+  });
+});
 
 /*--------- RECORDS BY ID --------*/
 app.get("/story/:id", async (req, res) => {
@@ -67,43 +73,59 @@ app.get("/storyblock/:id", async (req, res) => {
 
 /*--------- CREATE RECORDS --------*/
 app.post("/newstoryblock/", async (req, res) => {
-  const uuid = Helpers.generateUUID();
-  const getStory = await pg
-    .select(["uuid", "title", "created_at"])
-    .from("story")
-    .where({ id: req.body.story_id })
-    .then(async (data) => {
-      if (data.length >= 1) {
-        const result = await pg
-          .table("storyblock")
-          .insert({
-            uuid: uuid,
-            content: req.body.content,
-            story_id: req.body.story_id,
-          })
-          .then(async function () {
-            log("NEW STORYBLOCK: ", "created new storyblock");
-            res.status(200).send();
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-      } else {
-        log("STORY DON'T EXIST! with id:", req.body.story_id);
-        res.status(404).send();
-      }
-    })
-    .catch((e) => {
-      console.log(e);
-    });
+  let checkContentLength = Helpers.checkContentLength(req.body.content, 100);
+  let checkContentType = Helpers.checkIfString(req.body.content);
+  if(!checkContentLength || !checkContentType) {
+    res.status(404).send() 
+  }else {
+    const uuid = Helpers.generateUUID();
+    const getStory = await pg
+      .select(["uuid", "title", "created_at"])
+      .from("story")
+      .where({ id: req.body.story_id })
+      .then(async (data) => {
+
+          if (data.length >= 1) {
+            const result = await pg
+              .table("storyblock")
+              .insert({
+                uuid: uuid,
+                content: req.body.content,
+                story_id: req.body.story_id,
+              })
+              .then(async function () {
+                log("NEW STORYBLOCK: ", "created new storyblock");
+                res.status(200).send();
+              })
+              .catch((e) => {
+                console.log(e);
+              });
+          } else {
+            log("STORY DON'T EXIST! with id:", req.body.story_id);
+            res.status(404).send();
+          }
+      
+      
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+   
 });
 
 /*--------- DELETE RECORDS --------*/
 app.delete("/storyblock/", async (req, res) => {
-  const result = await pg.from("storyblock").where({ uuid: req.body.uuid }).del().then((data) => {
-    log(`DELETED STORYBLOCK: with uuid ${req.body.uuid}`);
-    res.json(data)
-  }).catch(() =>  res.status(404).send())
+  if(req.body.hasOwnProperty('uuid')){
+    const result = await pg.from("storyblock").where({ uuid: req.body.uuid }).del().then((data) => {
+        log(`DELETED STORYBLOCK: with uuid ${req.body.uuid}`);
+        res.json(data)
+    }).catch(() =>  res.status(200).send())
+  }else{
+    log("NO UUID FOUND")
+    res.status(200).send()
+  }
+
 });
 
 /*--------- INITIALIZE TABLES --------*/
