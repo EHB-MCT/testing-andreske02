@@ -104,11 +104,10 @@ app.post("/newstoryblock/", async (req, res) => {
             log("STORY DON'T EXIST! with id:", req.body.story_id);
             res.status(404).send();
           }
-      
-      
       })
       .catch((e) => {
         console.log(e);
+        res.status(404).send();
       });
   }
    
@@ -120,10 +119,10 @@ app.delete("/storyblock/", async (req, res) => {
     const result = await pg.from("storyblock").where({ uuid: req.body.uuid }).del().then((data) => {
         log(`DELETED STORYBLOCK: with uuid ${req.body.uuid}`);
         res.json(data)
-    }).catch(() =>  res.status(200).send())
+    }).catch(() =>  res.status(404).send())
   }else{
     log("NO UUID FOUND")
-    res.status(200).send()
+    res.status(404).send()
   }
 
 });

@@ -20,7 +20,7 @@ describe('GET /test endpoint', ()=>{
             expect(response.status).toBe(200,done())
             expect(response.body).toStrictEqual({},done())
         } catch (error) {
-            
+            console.log(error);
         }
     })
 })
@@ -96,7 +96,7 @@ describe('DELETE /storyblock endpoint', ()=>{
                 test: 'f70445c0-2910-11eb-891c-89c8941e6bf9'
             };
             const response = await request.delete('/storyblock/').send(service)
-            expect(response.status).toBe(200)
+            expect(response.status).toBe(404)
             done()
         } catch (error) {
             console.log(error);
